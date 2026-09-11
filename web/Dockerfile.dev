@@ -1,0 +1,21 @@
+# Imagen de desarrollo: corre el dev server de Vite con hot reload.
+# El codigo llega por bind mount desde docker-compose, no se hornea en la imagen.
+FROM node:24-alpine
+
+WORKDIR /app
+
+# npm ci (no --omit=dev): todo el toolchain de Vite vive en devDependencies.
+COPY package.json package-lock.json ./
+RUN npm ci && chown -R node:node /app
+
+# El usuario node tiene uid 1000, el mismo del host, para que el bind mount
+# sea escribible en ambos sentidos.
+USER node
+
+COPY --chown=node:node . .
+
+EXPOSE 5173
+
+# --host es necesario: por defecto Vite solo escucha en loopback y el puerto
+# publicado por Docker quedaria inalcanzable desde el host.
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

@@ -1,0 +1,13 @@
+# Sin esto el build context arrastra los ~76 MB de web/node_modules.
+web/node_modules
+web/dist
+web/.vite
+
+.git
+.idea
+.env
+enviar_repo.txt
+
+Dockerfile
+docker-compose.yml
+.dockerignore

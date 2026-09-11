@@ -1,0 +1,36 @@
+# --- Secretos ---
+# .env lleva las credenciales reales. .env.example si se versiona (ver ! abajo).
+.env
+.env.*.local
+
+# --- Go ---
+# Binario que produce `go build -o server .`
+/server
+*.exe
+*.test
+*.out
+coverage.*
+# Directorio de salida del build multi-stage, por si se compila fuera de Docker
+/out/
+
+# --- Frontend ---
+# web/.gitignore ya cubre estos, se repiten para que valga tambien desde la raiz.
+web/node_modules/
+web/dist/
+web/.vite/
+
+# --- Editores ---
+.idea/
+.vscode/
+*.swp
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
+
+# --- Notas locales ---
+# Contiene datos de contacto personales, no deberia acabar en el repo.
+enviar_repo.txt
+
+# El ejemplo si se versiona: es la plantilla del .env
+!.env.example

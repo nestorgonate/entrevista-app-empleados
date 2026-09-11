@@ -1,0 +1,82 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 500MB
+    env_file:
+      - ./.env
+    environment:
+      # Sobrescribe el DATABASE_URL del .env, que apunta a localhost para poder
+      # correr `go run .` en el host. Al ejecutar con docker hay que usar el nombre del servicio db.
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}?sslmode=disable
+    #Ejecutar el backend bajo el ID del usuario
+    user: "${UID:-1000}:${GID:-1000}"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - entrevista_network
+
+  # Dev server de Vite con hot reload.
+  # Tras cambiar web/package.json hay que recrear el volumen anonimo:
+  #   docker compose up --build -V web
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    environment:
+      - API_PROXY_TARGET=http://api:8000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web:/app
+      # Volumen anonimo para que el bind mount de arriba no sobreescribe el
+      # node_modules del contenedor con el del host. El host es glibc y la
+      # imagen es musl (alpine), y los binarios nativos de rollup no son
+      # intercambiables entre ambos.
+      - /app/node_modules
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - entrevista_network
+
+  db:
+    image: postgis/postgis:18-master
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql_data:/var/lib/postgresql
+    networks:
+      - entrevista_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgresql_data:
+networks:
+  entrevista_network:

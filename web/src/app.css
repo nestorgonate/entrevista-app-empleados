@@ -1,0 +1,43 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background-color: var(--color-slate-50);
+}
+
+/*
+ * Estilos compartidos por los formularios. Se declaran con @utility (no dentro
+ * de @layer components) porque en Tailwind v4 solo las utilidades registradas
+ * asi pueden reutilizarse desde otro @apply — como hace `boton` mas abajo.
+ */
+@utility campo {
+  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900
+         shadow-xs outline-none transition
+         placeholder:text-slate-400
+         focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20
+         disabled:cursor-not-allowed disabled:bg-slate-100;
+}
+
+@utility etiqueta {
+  @apply mb-1 block text-xs font-medium text-slate-600;
+}
+
+@utility boton {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm
+         font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@utility boton-primario {
+  @apply boton bg-indigo-600 text-white shadow-sm hover:bg-indigo-700;
+}
+
+@utility boton-secundario {
+  @apply boton border border-slate-300 bg-white text-slate-700 hover:bg-slate-50;
+}
+
+@utility boton-peligro {
+  @apply boton text-red-600 hover:bg-red-50;
+}

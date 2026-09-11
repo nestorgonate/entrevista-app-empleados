@@ -1,0 +1,7 @@
+# node_modules se instala dentro del contenedor (musl), nunca se copia del host.
+node_modules
+dist
+.vite
+
+Dockerfile.dev
+.dockerignore
