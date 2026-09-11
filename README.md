@@ -146,3 +146,9 @@ npm run dev     # http://localhost:5173
 ```
 
 El dev server de Vite hace de proxy de `/api` hacia `localhost:8000`, así que el navegador nunca cruza de origen y el backend no necesita CORS. Para desplegarlo, `npm run build` genera `web/dist` con archivos estáticos listos para Cloudflare Pages o cualquier CDN.
+
+---
+
+## Mejoras
+- Agregar JWT para manejo de sesiones y proteger endpoints
+- Mejorar el esquema de la base de datos para permitir un manejo basado en roles y llevar un registro en cambios de tareas
